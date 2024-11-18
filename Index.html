@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Productos</title>
+    <title>Catálogo de Productos con Paginación</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,32 +55,98 @@
         .add-to-cart:hover {
             background-color: #0056b3;
         }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Catálogo de Productos</h1>
-        <div class="product">
-            <img src="https://via.placeholder.com/200" alt="Producto 1">
-            <h3>Martillo</h3>
-            <p>Un martillo resistente para todo tipo de trabajos.</p>
-            <div class="price">$10.00</div>
-            <button class="add-to-cart">Añadir al carrito</button>
-        </div>
-        <div class="product">
-            <img src="https://via.placeholder.com/200" alt="Producto 2">
-            <h3>Taladro Eléctrico</h3>
-            <p>Taladro potente con múltiples velocidades.</p>
-            <div class="price">$50.00</div>
-            <button class="add-to-cart">Añadir al carrito</button>
-        </div>
-        <div class="product">
-            <img src="https://via.placeholder.com/200" alt="Producto 3">
-            <h3>Caja de Herramientas</h3>
-            <p>Caja con compartimentos para guardar herramientas.</p>
-            <div class="price">$25.00</div>
-            <button class="add-to-cart">Añadir al carrito</button>
+        <div id="products-container"></div>
+        <div class="pagination">
+            <button id="prev-button" disabled>Anterior</button>
+            <button id="next-button">Siguiente</button>
         </div>
     </div>
+
+    <script>
+        // Datos de productos (puedes cargarlos de un archivo JSON)
+        const products = [
+            { id: 1, name: "Martillo", description: "Martillo de acero para trabajos de construcción.", price: 10.99, image: "https://via.placeholder.com/200" },
+            { id: 2, name: "Taladro Eléctrico", description: "Taladro eléctrico con múltiples velocidades.", price: 49.99, image: "https://via.placeholder.com/200" },
+            { id: 3, name: "Caja de Herramientas", description: "Caja con compartimentos para guardar herramientas.", price: 25.99, image: "https://via.placeholder.com/200" },
+            { id: 4, name: "Llave Inglesa", description: "Llave inglesa ajustable de alta precisión.", price: 15.49, image: "https://via.placeholder.com/200" },
+            { id: 5, name: "Sierra Manual", description: "Sierra manual para cortes precisos en madera.", price: 20.00, image: "https://via.placeholder.com/200" },
+            { id: 6, name: "Cinta Métrica", description: "Cinta métrica de 5 metros de alta resistencia.", price: 5.99, image: "https://via.placeholder.com/200" }
+        ];
+
+        // Configuración de la paginación
+        const itemsPerPage = 2;
+        let currentPage = 1;
+
+        // Elementos del DOM
+        const productsContainer = document.getElementById("products-container");
+        const prevButton = document.getElementById("prev-button");
+        const nextButton = document.getElementById("next-button");
+
+        // Función para mostrar productos
+        function renderProducts() {
+            productsContainer.innerHTML = ""; // Limpia el contenedor
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedProducts = products.slice(start, end);
+
+            paginatedProducts.forEach(product => {
+                const productElement = document.createElement("div");
+                productElement.classList.add("product");
+                productElement.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <div class="price">$${product.price.toFixed(2)}</div>
+                    <button class="add-to-cart">Añadir al carrito</button>
+                `;
+                productsContainer.appendChild(productElement);
+            });
+
+            // Habilitar/deshabilitar botones de paginación
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === Math.ceil(products.length / itemsPerPage);
+        }
+
+        // Eventos de los botones
+        prevButton.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderProducts();
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            if (currentPage < Math.ceil(products.length / itemsPerPage)) {
+                currentPage++;
+                renderProducts();
+            }
+        });
+
+        // Renderizar productos inicialmente
+        renderProducts();
+    </script>
 </body>
-</html>
+</html> 
+    
