@@ -3,12 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Productos con Filtros</title>
+    <title>Catálogo de Productos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1.2em;
         }
         .container {
             padding: 20px;
@@ -67,9 +81,14 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Catálogo de Productos</h1>
+    <!-- Header -->
+    <header>
+        <h1>Ferretería Online</h1>
+        <p>Catálogo de Productos</p>
+    </header>
 
+    <!-- Contenido Principal -->
+    <div class="container">
         <!-- Filtros -->
         <div class="filters">
             <label>
