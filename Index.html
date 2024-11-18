@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Productos con Paginación</title>
+    <title>Catálogo de Productos con Filtros</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,6 +14,15 @@
             padding: 20px;
             max-width: 1200px;
             margin: auto;
+        }
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .filters select, .filters input {
+            padding: 10px;
+            margin: 0 5px;
         }
         .product {
             border: 1px solid #ccc;
@@ -55,63 +64,58 @@
         .add-to-cart:hover {
             background-color: #0056b3;
         }
-        .pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .pagination button {
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .pagination button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Catálogo de Productos</h1>
-        <div id="products-container"></div>
-        <div class="pagination">
-            <button id="prev-button" disabled>Anterior</button>
-            <button id="next-button">Siguiente</button>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <label>
+                Categoría:
+                <select id="category-filter">
+                    <option value="">Todas</option>
+                    <option value="Herramientas">Herramientas</option>
+                    <option value="Construcción">Construcción</option>
+                </select>
+            </label>
+            <label>
+                Precio Máximo:
+                <input type="number" id="price-filter" placeholder="Ejemplo: 50">
+            </label>
+            <button id="filter-button">Filtrar</button>
         </div>
+
+        <!-- Contenedor de productos -->
+        <div id="products-container"></div>
     </div>
 
     <script>
-        // Datos de productos (puedes cargarlos de un archivo JSON)
+        // Datos de productos
         const products = [
-            { id: 1, name: "Martillo", description: "Martillo de acero para trabajos de construcción.", price: 10.99, image: "https://via.placeholder.com/200" },
-            { id: 2, name: "Taladro Eléctrico", description: "Taladro eléctrico con múltiples velocidades.", price: 49.99, image: "https://via.placeholder.com/200" },
-            { id: 3, name: "Caja de Herramientas", description: "Caja con compartimentos para guardar herramientas.", price: 25.99, image: "https://via.placeholder.com/200" },
-            { id: 4, name: "Llave Inglesa", description: "Llave inglesa ajustable de alta precisión.", price: 15.49, image: "https://via.placeholder.com/200" },
-            { id: 5, name: "Sierra Manual", description: "Sierra manual para cortes precisos en madera.", price: 20.00, image: "https://via.placeholder.com/200" },
-            { id: 6, name: "Cinta Métrica", description: "Cinta métrica de 5 metros de alta resistencia.", price: 5.99, image: "https://via.placeholder.com/200" }
+            { id: 1, name: "Martillo", description: "Martillo de acero.", price: 10.99, category: "Herramientas", image: "https://via.placeholder.com/200" },
+            { id: 2, name: "Taladro Eléctrico", description: "Taladro eléctrico.", price: 49.99, category: "Herramientas", image: "https://via.placeholder.com/200" },
+            { id: 3, name: "Cemento", description: "Bolsa de cemento.", price: 15.99, category: "Construcción", image: "https://via.placeholder.com/200" },
+            { id: 4, name: "Llave Inglesa", description: "Llave ajustable.", price: 25.49, category: "Herramientas", image: "https://via.placeholder.com/200" },
+            { id: 5, name: "Sierra Manual", description: "Sierra para madera.", price: 20.00, category: "Herramientas", image: "https://via.placeholder.com/200" },
+            { id: 6, name: "Ladrillos", description: "Lote de ladrillos.", price: 5.99, category: "Construcción", image: "https://via.placeholder.com/200" }
         ];
-
-        // Configuración de la paginación
-        const itemsPerPage = 2;
-        let currentPage = 1;
 
         // Elementos del DOM
         const productsContainer = document.getElementById("products-container");
-        const prevButton = document.getElementById("prev-button");
-        const nextButton = document.getElementById("next-button");
+        const categoryFilter = document.getElementById("category-filter");
+        const priceFilter = document.getElementById("price-filter");
+        const filterButton = document.getElementById("filter-button");
 
         // Función para mostrar productos
-        function renderProducts() {
+        function renderProducts(filteredProducts) {
             productsContainer.innerHTML = ""; // Limpia el contenedor
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const paginatedProducts = products.slice(start, end);
-
-            paginatedProducts.forEach(product => {
+            if (filteredProducts.length === 0) {
+                productsContainer.innerHTML = "<p>No se encontraron productos.</p>";
+                return;
+            }
+            filteredProducts.forEach(product => {
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
                 productElement.innerHTML = `
@@ -123,30 +127,27 @@
                 `;
                 productsContainer.appendChild(productElement);
             });
-
-            // Habilitar/deshabilitar botones de paginación
-            prevButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage === Math.ceil(products.length / itemsPerPage);
         }
 
-        // Eventos de los botones
-        prevButton.addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderProducts();
-            }
-        });
+        // Función para aplicar los filtros
+        function applyFilters() {
+            const category = categoryFilter.value;
+            const maxPrice = parseFloat(priceFilter.value);
 
-        nextButton.addEventListener("click", () => {
-            if (currentPage < Math.ceil(products.length / itemsPerPage)) {
-                currentPage++;
-                renderProducts();
-            }
-        });
+            const filteredProducts = products.filter(product => {
+                const matchesCategory = category === "" || product.category === category;
+                const matchesPrice = isNaN(maxPrice) || product.price <= maxPrice;
+                return matchesCategory && matchesPrice;
+            });
 
-        // Renderizar productos inicialmente
-        renderProducts();
+            renderProducts(filteredProducts);
+        }
+
+        // Inicialización
+        filterButton.addEventListener("click", applyFilters);
+
+        // Mostrar todos los productos al inicio
+        renderProducts(products);
     </script>
 </body>
-</html> 
-    
+</html>
