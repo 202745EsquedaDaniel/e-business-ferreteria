@@ -1,0 +1,18 @@
+[
+    {
+      "id": 1,
+      "name": "Martillo",
+      "description": "Martillo de acero para trabajos de construcción.",
+      "price": 10.99,
+      "stock": 20,
+      "image": "https://via.placeholder.com/200"
+    },
+    {
+      "id": 2,
+      "name": "Taladro Eléctrico",
+      "description": "Taladro eléctrico con múltiples velocidades.",
+      "price": 49.99,
+      "stock": 10,
+      "image": "https://via.placeholder.com/200"
+    }
+  ]
