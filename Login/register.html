@@ -55,6 +55,11 @@
         .register-container a:hover {
             text-decoration: underline;
         }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
 </style>
 </head>
 <body>
@@ -63,8 +68,10 @@
 <input type="text" id="new-username" placeholder="Usuario">
 <input type="email" id="email" placeholder="Correo Electrónico">
 <input type="password" id="new-password" placeholder="Contraseña">
+<input type="password" id="confirm-password" placeholder="Confirmar Contraseña">
 <button id="register-button">Registrar</button>
 <a href="login.html">¿Ya tienes cuenta? Inicia sesión aquí</a>
+<p class="error-message" id="error-message"></p>
 </div>
  
     <script>
@@ -72,19 +79,56 @@
             const username = document.getElementById("new-username").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("new-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            const errorMessage = document.getElementById("error-message");
  
-            // Verificar si todos los campos están llenos
-            if (username && email && password) {
-                // Almacenar en localStorage
+            // Validación del formulario
+            let error = "";
+ 
+            // Verificar si los campos están vacíos
+            if (!username || !email || !password || !confirmPassword) {
+                error = "Por favor, completa todos los campos.";
+            }
+ 
+            // Validar formato del correo electrónico
+            else if (!validateEmail(email)) {
+                error = "Por favor, ingresa un correo electrónico válido.";
+            }
+ 
+            // Validar contraseña: al menos 8 caracteres, una mayúscula, un número y un carácter especial
+            else if (!validatePassword(password)) {
+                error = "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, un número y un carácter especial.";
+            }
+ 
+            // Validar que las contraseñas coincidan
+            else if (password !== confirmPassword) {
+                error = "Las contraseñas no coinciden.";
+            }
+ 
+            // Mostrar el mensaje de error o registrar al usuario
+            if (error) {
+                errorMessage.textContent = error;
+            } else {
+                // Almacenar los datos en el localStorage
                 localStorage.setItem('username', username);
                 localStorage.setItem('password', password);
  
                 alert("Registro exitoso. Ahora puedes iniciar sesión.");
                 window.location.href = "login.html"; // Redirigir al login
-            } else {
-                alert("Por favor, completa todos los campos.");
             }
         });
+ 
+        // Función para validar el correo electrónico
+        function validateEmail(email) {
+            const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            return regex.test(email);
+        }
+ 
+        // Función para validar la contraseña
+        function validatePassword(password) {
+            const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+            return regex.test(password);
+        }
 </script>
 </body>
 </html>
