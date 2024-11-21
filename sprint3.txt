@@ -1,1 +1,2 @@
 la interfaz esta creada
+Funciona guardar el carrito
