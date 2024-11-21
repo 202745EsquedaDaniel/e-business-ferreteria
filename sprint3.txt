@@ -1,3 +1,4 @@
 la interfaz esta creada
 Funciona guardar el carrito
 Agregar desde el catálogo
+cancelar o borrar carritos
