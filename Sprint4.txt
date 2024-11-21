@@ -1,4 +1,4 @@
 Actualizar stock
 Agregar y quitar productos
 Interfaz administrador
-Simulacion de pagos
+Simulacion de pago
