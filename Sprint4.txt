@@ -1,2 +1,3 @@
 Actualizar stock
 Agregar y quitar productos
+Interfaz administrador
